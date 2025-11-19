@@ -28,7 +28,7 @@ MCP server for [MSC (Multi‑Screencap Control)](https://github.com/NakanoSanku/
 
 ---
 
-## 安装与开发环境
+## 安装与开发环境（本地 clone 场景）
 
 在项目根目录执行（会自动创建/使用 `.venv` 虚拟环境）：
 
@@ -36,7 +36,7 @@ MCP server for [MSC (Multi‑Screencap Control)](https://github.com/NakanoSanku/
 uv sync
 ```
 
-运行单元测试：
+运行单元测试（入口函数 + 工具函数）：
 
 ```bash
 uv run python -m unittest tests.test_main tests.test_server
@@ -50,40 +50,63 @@ uv run python -m unittest
 
 ---
 
-## 作为 MCP Server 启动
+## 通过 uvx 直接使用（推荐，免手动 clone 仓库）
 
-在项目根目录运行：
+如果你只想在 MCP 客户端中使用本工具，而不关心本地开发环境，
+可以使用 `uvx` 直接从 Git 仓库拉取并运行，无需手动 `git clone`。
 
-```bash
-uv run python -m msc_mcp
-```
-
-或使用脚本入口（安装后）：
+假设本项目托管在：`https://github.com/<your-username>/msc-mcp`，  
+你可以这样启动 MCP server：
 
 ```bash
-uv run msc-mcp
+uvx --from git+https://github.com/<your-username>/msc-mcp.git msc-mcp
 ```
 
-这两种方式都会在标准输入/输出上启动 MCP server，
-供支持 MCP 的客户端通过本地进程方式连接。
+说明：
 
-### MCP 客户端配置示例（伪代码）
+- `uvx --from git+...` 会在临时环境中安装运行依赖，用完即走，不污染全局环境。
+- `msc-mcp` 对应 `pyproject.toml` 里的脚本入口：`msc-mcp = "msc_mcp:main"`。
+- 如果未来发布到了 PyPI，也可以直接：`uvx msc-mcp`。
 
-以一个典型的 MCP 客户端配置为例，命令大致类似：
+### 使用 uvx 的 MCP 客户端配置示例
+
+以一个典型的 MCP 客户端（伪代码）为例：
 
 ```jsonc
 {
   "mcpServers": {
     "msc-mcp": {
-      "command": "uv",
-      "args": ["run", "python", "-m", "msc_mcp"],
-      "env": {}
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/<your-username>/msc-mcp.git",
+        "msc-mcp"
+      ]
     }
   }
 }
 ```
 
-具体写法请参考你所使用的 MCP 客户端文档。
+这样配置后，客户端在需要时会通过 `uvx` 自动拉取并运行本工具，
+用户无需提前 clone 仓库或手动创建虚拟环境。
+
+---
+
+## 作为 MCP Server 启动（本地开发调试）
+
+在本地 clone 了仓库并执行过 `uv sync` 后，可以直接在项目根目录运行：
+
+```bash
+uv run python -m msc_mcp
+```
+
+或使用脚本入口：
+
+```bash
+uv run msc-mcp
+```
+
+这两种方式都会在标准输入/输出上启动 MCP server，供支持 MCP 的客户端通过本地进程方式连接。
 
 ---
 
