@@ -1,0 +1,23 @@
+[project]
+name = "msc-mcp"
+version = "0.1.0"
+description = "MCP server for MSC (Multi-Screencap Control)"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "mcp",
+    "adbutils",
+    "opencv-python",
+    "numpy",
+    "msc @ git+https://github.com/NakanoSanku/msc",
+]
+
+[project.scripts]
+msc-mcp = "msc_mcp:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.metadata]
+allow-direct-references = true
